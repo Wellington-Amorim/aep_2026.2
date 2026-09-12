@@ -82,3 +82,28 @@ docker compose down
 
 Os dados permanecem armazenados no volume `mongodb_data` e estarão disponíveis na
 próxima inicialização.
+
+## Executando os testes
+
+Este projeto possui dois tipos de teste:
+
+### Testes unitários
+
+Cobrem `SolicitacaoService` e `TerminalMenu` (JUnit 5 + Mockito). Não dependem de nenhum
+serviço externo e podem ser executados a qualquer momento:
+
+```bash
+# Maven
+mvn test
+```
+
+### Teste de integração (Testcontainers)
+
+O `ObservacaoApplicationTests` sobe o contexto completo do Spring Boot com um MongoDB real,
+via [Testcontainers](https://testcontainers.com/). Ele **requer Docker instalado e em
+execução** na máquina.
+
+```bash
+# Maven
+mvn test -Dtest=ObservacaoApplicationTests
+```
