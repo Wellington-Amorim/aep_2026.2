@@ -4,6 +4,9 @@ import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Document(collection = "solicitacoes")
 public class Solicitacao {
 
@@ -20,7 +23,8 @@ public class Solicitacao {
     private String descricao;
 
     private String status;
-    private String localizacao;
+    private Endereco endereco;
+    private List<Atualizacao> historico = new ArrayList<>();
     private String data;
     private String sla;
     private boolean anonimo;
@@ -64,12 +68,11 @@ public class Solicitacao {
         this.status = status;
     }
 
-    public String getLocalizacao() {
-        return localizacao;
-    }
-    public void setLocalizacao(String localizacao) {
-        this.localizacao = localizacao;
-    }
+    public Endereco getEndereco() { return endereco; }
+    public void setEndereco(Endereco endereco) { this.endereco = endereco; }
+
+    public List<Atualizacao> getHistorico() { return historico; }
+    public void setHistorico(List<Atualizacao> historico) { this.historico = historico; }
 
     public String getData() {
         return data;
