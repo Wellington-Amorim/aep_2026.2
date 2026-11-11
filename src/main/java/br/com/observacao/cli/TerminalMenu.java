@@ -1,5 +1,7 @@
 package br.com.observacao.cli;
 
+import br.com.observacao.model.Atualizacao;
+import br.com.observacao.model.Endereco;
 import br.com.observacao.model.Solicitacao;
 import br.com.observacao.service.SolicitacaoService;
 import org.springframework.boot.CommandLineRunner;
@@ -101,6 +103,27 @@ public class TerminalMenu implements CommandLineRunner {
 
         System.out.print("Digite a descricao (minimo 20 caracteres): ");
         novaSolic.setDescricao(scanner.nextLine());
+
+        System.out.println("\nInforme o local do problema:");
+        Endereco endereco = new Endereco();
+
+        System.out.print("Logradouro (Ex: Rua A, 123): ");
+        endereco.setLogradouro(scanner.nextLine());
+
+        System.out.print("Bairro: ");
+        endereco.setBairro(scanner.nextLine());
+
+        System.out.print("Ponto de Referencia: ");
+        endereco.setPontoReferencia(scanner.nextLine());
+
+        novaSolic.setEndereco(endereco);
+
+        Atualizacao abertura = new Atualizacao(
+                java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
+                "Solicitacao registrada pelo cidadao",
+                "Sistema"
+        );
+        novaSolic.getHistorico().add(abertura);
 
         novaSolic.setAnonimo(false);
 
