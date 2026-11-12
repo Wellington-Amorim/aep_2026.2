@@ -364,25 +364,25 @@ class SolicitacaoServiceTest {
     }
 
     @Test
-    @DisplayName("excluirPorCodigo: codigo existente chama delete com o objeto correto")
-    void excluirPorCodigo_codigoExistente_chamaDeleteComObjetoCorreto() {
+    @DisplayName("excluirSolicitacao: codigo existente chama delete com o objeto correto")
+    void excluirSolicitacao_codigoExistente_chamaDeleteComObjetoCorreto() {
         Solicitacao s = new Solicitacao();
         s.setCodigo("REQ-2026-DDDD");
         when(repository.findById("REQ-2026-DDDD")).thenReturn(Optional.of(s));
 
-        service.excluirPorCodigo("REQ-2026-DDDD");
+        service.excluirSolicitacao("REQ-2026-DDDD");
 
         verify(repository, times(1)).findById("REQ-2026-DDDD");
         verify(repository, times(1)).delete(s);
     }
 
     @Test
-    @DisplayName("excluirPorCodigo: codigo inexistente propaga RuntimeException e nao chama delete")
-    void excluirPorCodigo_codigoInexistente_propagaExcecaoNaoChamaDelete() {
+    @DisplayName("excluirSolicitacao: codigo inexistente propaga RuntimeException e nao chama delete")
+    void excluirSolicitacao_codigoInexistente_propagaExcecaoNaoChamaDelete() {
         when(repository.findById("INEXISTENTE")).thenReturn(Optional.empty());
 
         RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> service.excluirPorCodigo("INEXISTENTE"));
+                () -> service.excluirSolicitacao("INEXISTENTE"));
 
         assertEquals("Protocolo nao encontrado", ex.getMessage());
         verify(repository, never()).delete(any());

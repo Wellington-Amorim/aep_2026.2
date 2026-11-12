@@ -178,7 +178,7 @@ public class TerminalMenu implements CommandLineRunner {
         System.out.print("Digite o codigo do protocolo: ");
         String codigoDel = scanner.nextLine();
         try {
-            solicitacaoService.excluirPorCodigo(codigoDel);
+            solicitacaoService.excluirSolicitacao(codigoDel);
             System.out.println("\nSolicitacao excluida com sucesso!");
         } catch (Exception e) {
             System.out.println("\nErro ao excluir: " + e.getMessage());

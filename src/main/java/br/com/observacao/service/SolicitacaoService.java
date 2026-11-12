@@ -1,5 +1,6 @@
 package br.com.observacao.service;
 
+import br.com.observacao.model.Atualizacao;
 import br.com.observacao.model.Solicitacao;
 import br.com.observacao.model.Usuario;
 import br.com.observacao.repository.SolicitacaoRepository;
@@ -67,10 +68,18 @@ public class SolicitacaoService {
     public Solicitacao atualizarStatus(String codigo, String novoStatus) {
         Solicitacao solicitacao = buscarPorCodigo(codigo);
         solicitacao.setStatus(novoStatus);
+
+        Atualizacao novaAtt = new Atualizacao(
+                java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
+                "Status alterado para: " + novoStatus,
+                "Gestor Público"
+        );
+        solicitacao.getHistorico().add(novaAtt);
+
         return repository.save(solicitacao);
     }
 
-    public void excluirPorCodigo(String codigo) {
+    public void excluirSolicitacao(String codigo) {
         Solicitacao solicitacao = buscarPorCodigo(codigo);
         repository.delete(solicitacao);
     }
