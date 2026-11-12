@@ -186,20 +186,50 @@ public class TerminalMenu implements CommandLineRunner {
     }
 
     private void verDetalhesSolicitacao(Scanner scanner) {
-        System.out.println("\n--- Detalhes da Solicitacao ---");
-        System.out.print("Digite o codigo do protocolo: ");
+        System.out.print("\nDigite o codigo do protocolo (Ex: REQ-2026-ABCD): ");
         String codigo = scanner.nextLine();
+
         try {
-            Solicitacao s = solicitacaoService.buscarPorCodigo(codigo);
-            System.out.println("Protocolo: " + s.getCodigo());
-            System.out.println("Categoria: " + s.getCategoria());
-            System.out.println("Prioridade: " + s.getPrioridade());
-            System.out.println("Status: " + s.getStatus());
-            System.out.println("Data: " + s.getData());
-            System.out.println("SLA: " + s.getSla());
-            System.out.println("Descricao: " + s.getDescricao());
+            Solicitacao sol = solicitacaoService.buscarPorCodigo(codigo);
+
+            System.out.println("\n=======================================================");
+            System.out.println("DETALHES DA SOLICITAÇÃO: " + sol.getCodigo());
+            System.out.println("=======================================================");
+            System.out.println("Categoria..: " + sol.getCategoria());
+            System.out.println("Prioridade.: " + sol.getPrioridade() + " (SLA: " + sol.getSla() + ")");
+            System.out.println("Status.....: " + sol.getStatus());
+            System.out.println("Data.......: " + sol.getData());
+            System.out.println("Descricao..: " + sol.getDescricao());
+
+            System.out.println("\nDADOS DO CIDADÃO (Coleção Relacionada)");
+            if (sol.isAnonimo()) {
+                System.out.println("Registro...: Anônimo");
+            } else {
+                System.out.println("Nome.......: " + sol.getCidadao().getNome());
+                System.out.println("E-mail.....: " + sol.getCidadao().getEmail());
+            }
+
+            System.out.println("\nLOCALIZAÇÃO (Objeto Complexo)");
+            if (sol.getEndereco() != null) {
+                System.out.println("Logradouro.: " + sol.getEndereco().getLogradouro());
+                System.out.println("Bairro.....: " + sol.getEndereco().getBairro());
+                System.out.println("Referência.: " + sol.getEndereco().getPontoReferencia());
+            } else {
+                System.out.println("Endereço não informado.");
+            }
+
+            System.out.println("\nHISTÓRICO DE ATUALIZAÇÕES (Subdocumentos Aninhados)");
+            if (sol.getHistorico() != null && !sol.getHistorico().isEmpty()) {
+                for (Atualizacao att : sol.getHistorico()) {
+                    System.out.println("- [" + att.getDataHora() + "] " + att.getNota() + " (Autor: " + att.getAutor() + ")");
+                }
+            } else {
+                System.out.println("Sem histórico registrado.");
+            }
+            System.out.println("=======================================================\n");
+
         } catch (Exception e) {
-            System.out.println("\nErro ao buscar: " + e.getMessage());
+            System.out.println("\nErro: " + e.getMessage());
         }
     }
 }
