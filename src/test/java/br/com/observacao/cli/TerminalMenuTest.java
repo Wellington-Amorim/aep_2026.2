@@ -150,13 +150,13 @@ class TerminalMenuTest {
     }
 
     @Test
-    @DisplayName("run: opcao 4 chama excluirPorCodigo do service com o codigo digitado")
+    @DisplayName("run: opcao 4 chama excluirSolicitacao do service com o codigo digitado")
     void run_opcao4_chamaExcluirSolicitacao() throws Exception {
         simularEntrada("4", "REQ-1", "0");
 
         terminalMenu.run();
 
-        verify(solicitacaoService, times(1)).excluirPorCodigo("REQ-1");
+        verify(solicitacaoService, times(1)).excluirSolicitacao("REQ-1");
     }
 
     @Test
@@ -396,7 +396,7 @@ class TerminalMenuTest {
         terminalMenu.run();
 
         assertTrue(saida().contains("Solicitacao excluida com sucesso!"));
-        verify(solicitacaoService, times(1)).excluirPorCodigo("REQ-1");
+        verify(solicitacaoService, times(1)).excluirSolicitacao("REQ-1");
     }
 
     @Test
@@ -404,7 +404,7 @@ class TerminalMenuTest {
     void excluirSolicitacao_servicoLancaExcecao_imprimeMensagemDeErro() throws Exception {
         simularEntrada("4", "REQ-INEXISTENTE", "0");
         doThrow(new RuntimeException("Protocolo nao encontrado"))
-                .when(solicitacaoService).excluirPorCodigo("REQ-INEXISTENTE");
+                .when(solicitacaoService).excluirSolicitacao("REQ-INEXISTENTE");
 
         terminalMenu.run();
 

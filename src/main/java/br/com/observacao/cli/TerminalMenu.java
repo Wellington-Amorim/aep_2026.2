@@ -1,6 +1,9 @@
 package br.com.observacao.cli;
 
+import br.com.observacao.model.Atualizacao;
+import br.com.observacao.model.Endereco;
 import br.com.observacao.model.Solicitacao;
+import br.com.observacao.model.Usuario;
 import br.com.observacao.service.SolicitacaoService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -102,11 +105,48 @@ public class TerminalMenu implements CommandLineRunner {
         System.out.print("Digite a descricao (minimo 20 caracteres): ");
         novaSolic.setDescricao(scanner.nextLine());
 
+        System.out.println("\nInforme o local do problema:");
+        Endereco endereco = new Endereco();
+
+        System.out.print("Logradouro (Ex: Rua A, 123): ");
+        endereco.setLogradouro(scanner.nextLine());
+
+        System.out.print("Bairro: ");
+        endereco.setBairro(scanner.nextLine());
+
+        System.out.print("Ponto de Referencia: ");
+        endereco.setPontoReferencia(scanner.nextLine());
+
+        novaSolic.setEndereco(endereco);
+
+        Atualizacao abertura = new Atualizacao(
+                java.time.LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm")),
+                "Solicitacao registrada pelo cidadao",
+                "Sistema"
+        );
+        novaSolic.getHistorico().add(abertura);
+
         novaSolic.setAnonimo(false);
 
+        System.out.print("\nDeseja registrar de forma anonima? (S/N): ");
+        String respostaAnonimo = scanner.nextLine();
+
+        Usuario usuarioInfo = new Usuario();
+
+        if (respostaAnonimo.equalsIgnoreCase("S")) {
+            novaSolic.setAnonimo(true);
+        } else {
+            novaSolic.setAnonimo(false);
+            System.out.println("--- Dados do Cidadão ---");
+            System.out.print("Nome completo: ");
+            usuarioInfo.setNome(scanner.nextLine());
+            System.out.print("E-mail: ");
+            usuarioInfo.setEmail(scanner.nextLine());
+        }
+
         try {
-            solicitacaoService.criarSolicitacao(novaSolic);
-            System.out.println("\nSolicitacao registrada com sucesso!");
+            solicitacaoService.criarSolicitacao(novaSolic, usuarioInfo);
+            System.out.println("\nSolicitacao registrada com sucesso e vinculada ao banco de dados!");
         } catch (Exception e) {
             System.out.println("\nErro ao registrar: " + e.getMessage());
         }
@@ -138,7 +178,7 @@ public class TerminalMenu implements CommandLineRunner {
         System.out.print("Digite o codigo do protocolo: ");
         String codigoDel = scanner.nextLine();
         try {
-            solicitacaoService.excluirPorCodigo(codigoDel);
+            solicitacaoService.excluirSolicitacao(codigoDel);
             System.out.println("\nSolicitacao excluida com sucesso!");
         } catch (Exception e) {
             System.out.println("\nErro ao excluir: " + e.getMessage());
@@ -146,20 +186,50 @@ public class TerminalMenu implements CommandLineRunner {
     }
 
     private void verDetalhesSolicitacao(Scanner scanner) {
-        System.out.println("\n--- Detalhes da Solicitacao ---");
-        System.out.print("Digite o codigo do protocolo: ");
+        System.out.print("\nDigite o codigo do protocolo (Ex: REQ-2026-ABCD): ");
         String codigo = scanner.nextLine();
+
         try {
-            Solicitacao s = solicitacaoService.buscarPorCodigo(codigo);
-            System.out.println("Protocolo: " + s.getCodigo());
-            System.out.println("Categoria: " + s.getCategoria());
-            System.out.println("Prioridade: " + s.getPrioridade());
-            System.out.println("Status: " + s.getStatus());
-            System.out.println("Data: " + s.getData());
-            System.out.println("SLA: " + s.getSla());
-            System.out.println("Descricao: " + s.getDescricao());
+            Solicitacao sol = solicitacaoService.buscarPorCodigo(codigo);
+
+            System.out.println("\n=======================================================");
+            System.out.println("DETALHES DA SOLICITAÇÃO: " + sol.getCodigo());
+            System.out.println("=======================================================");
+            System.out.println("Categoria..: " + sol.getCategoria());
+            System.out.println("Prioridade.: " + sol.getPrioridade() + " (SLA: " + sol.getSla() + ")");
+            System.out.println("Status.....: " + sol.getStatus());
+            System.out.println("Data.......: " + sol.getData());
+            System.out.println("Descricao..: " + sol.getDescricao());
+
+            System.out.println("\nDADOS DO CIDADÃO (Coleção Relacionada)");
+            if (sol.isAnonimo()) {
+                System.out.println("Registro...: Anônimo");
+            } else {
+                System.out.println("Nome.......: " + sol.getCidadao().getNome());
+                System.out.println("E-mail.....: " + sol.getCidadao().getEmail());
+            }
+
+            System.out.println("\nLOCALIZAÇÃO (Objeto Complexo)");
+            if (sol.getEndereco() != null) {
+                System.out.println("Logradouro.: " + sol.getEndereco().getLogradouro());
+                System.out.println("Bairro.....: " + sol.getEndereco().getBairro());
+                System.out.println("Referência.: " + sol.getEndereco().getPontoReferencia());
+            } else {
+                System.out.println("Endereço não informado.");
+            }
+
+            System.out.println("\nHISTÓRICO DE ATUALIZAÇÕES (Subdocumentos Aninhados)");
+            if (sol.getHistorico() != null && !sol.getHistorico().isEmpty()) {
+                for (Atualizacao att : sol.getHistorico()) {
+                    System.out.println("- [" + att.getDataHora() + "] " + att.getNota() + " (Autor: " + att.getAutor() + ")");
+                }
+            } else {
+                System.out.println("Sem histórico registrado.");
+            }
+            System.out.println("=======================================================\n");
+
         } catch (Exception e) {
-            System.out.println("\nErro ao buscar: " + e.getMessage());
+            System.out.println("\nErro: " + e.getMessage());
         }
     }
 }

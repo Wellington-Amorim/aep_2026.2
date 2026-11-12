@@ -2,7 +2,11 @@ package br.com.observacao.model;
 
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Document(collection = "solicitacoes")
 public class Solicitacao {
@@ -19,21 +23,21 @@ public class Solicitacao {
     @NotBlank
     private String descricao;
 
+    @DBRef
+    private Usuario cidadao;
+
     private String status;
-    private String localizacao;
+    private Endereco endereco;
+    private List<Atualizacao> historico = new ArrayList<>();
     private String data;
     private String sla;
     private boolean anonimo;
-    private String nomeCidadao;
-    private String emailCidadao;
 
-    public Solicitacao() {
-    }
+    public Solicitacao() { }
 
     public String getCodigo() {
         return codigo;
     }
-
     public void setCodigo(String codigo) {
         this.codigo = codigo;
     }
@@ -41,7 +45,6 @@ public class Solicitacao {
     public String getCategoria() {
         return categoria;
     }
-
     public void setCategoria(String categoria) {
         this.categoria = categoria;
     }
@@ -49,7 +52,6 @@ public class Solicitacao {
     public String getPrioridade() {
         return prioridade;
     }
-
     public void setPrioridade(String prioridade) {
         this.prioridade = prioridade;
     }
@@ -57,7 +59,6 @@ public class Solicitacao {
     public String getDescricao() {
         return descricao;
     }
-
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
@@ -65,23 +66,19 @@ public class Solicitacao {
     public String getStatus() {
         return status;
     }
-
     public void setStatus(String status) {
         this.status = status;
     }
 
-    public String getLocalizacao() {
-        return localizacao;
-    }
+    public Endereco getEndereco() { return endereco; }
+    public void setEndereco(Endereco endereco) { this.endereco = endereco; }
 
-    public void setLocalizacao(String localizacao) {
-        this.localizacao = localizacao;
-    }
+    public List<Atualizacao> getHistorico() { return historico; }
+    public void setHistorico(List<Atualizacao> historico) { this.historico = historico; }
 
     public String getData() {
         return data;
     }
-
     public void setData(String data) {
         this.data = data;
     }
@@ -89,7 +86,6 @@ public class Solicitacao {
     public String getSla() {
         return sla;
     }
-
     public void setSla(String sla) {
         this.sla = sla;
     }
@@ -97,24 +93,10 @@ public class Solicitacao {
     public boolean isAnonimo() {
         return anonimo;
     }
-
     public void setAnonimo(boolean anonimo) {
         this.anonimo = anonimo;
     }
 
-    public String getNomeCidadao() {
-        return nomeCidadao;
-    }
-
-    public void setNomeCidadao(String nomeCidadao) {
-        this.nomeCidadao = nomeCidadao;
-    }
-
-    public String getEmailCidadao() {
-        return emailCidadao;
-    }
-
-    public void setEmailCidadao(String emailCidadao) {
-        this.emailCidadao = emailCidadao;
-    }
+    public Usuario getCidadao() { return cidadao; }
+    public void setCidadao(Usuario cidadao) { this.cidadao = cidadao; }
 }
