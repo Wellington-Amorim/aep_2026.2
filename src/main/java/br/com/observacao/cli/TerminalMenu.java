@@ -3,6 +3,7 @@ package br.com.observacao.cli;
 import br.com.observacao.model.Atualizacao;
 import br.com.observacao.model.Endereco;
 import br.com.observacao.model.Solicitacao;
+import br.com.observacao.model.Usuario;
 import br.com.observacao.service.SolicitacaoService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -127,9 +128,25 @@ public class TerminalMenu implements CommandLineRunner {
 
         novaSolic.setAnonimo(false);
 
+        System.out.print("\nDeseja registrar de forma anonima? (S/N): ");
+        String respostaAnonimo = scanner.nextLine();
+
+        Usuario usuarioInfo = new Usuario();
+
+        if (respostaAnonimo.equalsIgnoreCase("S")) {
+            novaSolic.setAnonimo(true);
+        } else {
+            novaSolic.setAnonimo(false);
+            System.out.println("--- Dados do Cidadão ---");
+            System.out.print("Nome completo: ");
+            usuarioInfo.setNome(scanner.nextLine());
+            System.out.print("E-mail: ");
+            usuarioInfo.setEmail(scanner.nextLine());
+        }
+
         try {
-            solicitacaoService.criarSolicitacao(novaSolic);
-            System.out.println("\nSolicitacao registrada com sucesso!");
+            solicitacaoService.criarSolicitacao(novaSolic, usuarioInfo);
+            System.out.println("\nSolicitacao registrada com sucesso e vinculada ao banco de dados!");
         } catch (Exception e) {
             System.out.println("\nErro ao registrar: " + e.getMessage());
         }

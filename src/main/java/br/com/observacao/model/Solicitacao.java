@@ -2,6 +2,7 @@ package br.com.observacao.model;
 
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.ArrayList;
@@ -22,14 +23,15 @@ public class Solicitacao {
     @NotBlank
     private String descricao;
 
+    @DBRef
+    private Usuario cidadao;
+
     private String status;
     private Endereco endereco;
     private List<Atualizacao> historico = new ArrayList<>();
     private String data;
     private String sla;
     private boolean anonimo;
-    private String nomeCidadao;
-    private String emailCidadao;
 
     public Solicitacao() { }
 
@@ -95,17 +97,6 @@ public class Solicitacao {
         this.anonimo = anonimo;
     }
 
-    public String getNomeCidadao() {
-        return nomeCidadao;
-    }
-    public void setNomeCidadao(String nomeCidadao) {
-        this.nomeCidadao = nomeCidadao;
-    }
-
-    public String getEmailCidadao() {
-        return emailCidadao;
-    }
-    public void setEmailCidadao(String emailCidadao) {
-        this.emailCidadao = emailCidadao;
-    }
+    public Usuario getCidadao() { return cidadao; }
+    public void setCidadao(Usuario cidadao) { this.cidadao = cidadao; }
 }

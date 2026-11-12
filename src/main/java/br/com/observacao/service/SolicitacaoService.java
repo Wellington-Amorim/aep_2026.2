@@ -1,7 +1,9 @@
 package br.com.observacao.service;
 
 import br.com.observacao.model.Solicitacao;
+import br.com.observacao.model.Usuario;
 import br.com.observacao.repository.SolicitacaoRepository;
+import br.com.observacao.repository.UsuarioRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -13,18 +15,27 @@ import java.util.UUID;
 public class SolicitacaoService {
 
     private final SolicitacaoRepository repository;
+    private final UsuarioRepository usuarioRepository;
 
-    public SolicitacaoService(SolicitacaoRepository repository) {
+    public SolicitacaoService(SolicitacaoRepository repository, UsuarioRepository usuarioRepository) {
         this.repository = repository;
+        this.usuarioRepository = usuarioRepository;
     }
 
-    public Solicitacao criarSolicitacao(Solicitacao solicitacao) {
+    public Solicitacao criarSolicitacao(Solicitacao solicitacao, Usuario usuarioCli) {
         if (solicitacao.isAnonimo()) {
             if (solicitacao.getDescricao() == null || solicitacao.getDescricao().length() < 20) {
                 throw new IllegalArgumentException("Denuncias anonimas exigem no minimo 20 caracteres");
             }
-            solicitacao.setNomeCidadao("Anonimo");
-            solicitacao.setEmailCidadao("anonimo@sistema.com");
+
+            Usuario anonimo = usuarioRepository.findByEmail("anonimo@sistema.com")
+                    .orElseGet(() -> usuarioRepository.save(new Usuario("Anonimo", "anonimo@sistema.com")));
+            solicitacao.setCidadao(anonimo);
+        } else {
+
+            Usuario cidadaoDb = usuarioRepository.findByEmail(usuarioCli.getEmail())
+                    .orElseGet(() -> usuarioRepository.save(usuarioCli));
+            solicitacao.setCidadao(cidadaoDb);
         }
 
         solicitacao.setCodigo("REQ-" + LocalDate.now().getYear() + "-" + UUID.randomUUID().toString().substring(0, 4).toUpperCase());
