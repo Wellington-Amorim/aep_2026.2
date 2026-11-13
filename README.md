@@ -1,9 +1,6 @@
 # AEP 2026 - SEGUNDO SEMESTRE
 > ObservaAção
 
-# AEP 2026 - SEGUNDO SEMESTRE
-> ObservaAção
-
 **Versão final da AEP:** [ObservaAção v1.1.0](https://github.com/Wellington-Amorim/aep_2026.2/releases/tag/v1.1.0)
 
 ## Definição do Problema
