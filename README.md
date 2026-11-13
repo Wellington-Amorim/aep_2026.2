@@ -1,6 +1,11 @@
 # AEP 2026 - SEGUNDO SEMESTRE
 > ObservaAção
 
+# AEP 2026 - SEGUNDO SEMESTRE
+> ObservaAção
+
+**Versão final da AEP:** [ObservaAção v1.1.0](https://github.com/Wellington-Amorim/aep_2026.2/releases/tag/v1.1.0)
+
 ## Definição do Problema
 O ObservaAção é um sistema de zeladoria urbana focado no cidadão.
 O objetivo é solucionar a dificuldade de comunicação entre a população e os órgãos públicos, facilitando o registro de demandas da cidade (como buracos na via, falta de iluminação ou problemas na limpeza urbana).
