@@ -17,7 +17,7 @@ Para atender aos requisitos finais da disciplina, a modelagem no MongoDB foi evo
 Esta Prova de Conceito (PoC) final funciona via linha de comando (CLI) e contempla as operações de CRUD evoluídas no banco de dados NoSQL:
 
 - **Registrar Solicitação (Create):** Criação de chamados informando categoria, prioridade, descrição e endereço estruturado. O sistema atrela a solicitação ao perfil do cidadão, gera um protocolo único e define o SLA.
-- **Listar Solicitações (Read):** Exibição geral de todos os chamados ativos no sistema para acompanhamento rápido.
+- **Listar Solicitações (Read):** Exibe todas as solicitações cadastradas para acompanhamento.
 - **Ver Detalhes da Solicitação (Read):** Consulta completa de todas as informações, dados do usuário criador e o histórico de atualizações de um chamado específico.
 - **Atualizar Status (Update):** Modificação do andamento de uma solicitação existente gerando novos registros no histórico aninhado.
 - **Excluir Solicitação (Delete):** Remoção permanente de chamados do banco de dados.
@@ -32,7 +32,37 @@ Esta Prova de Conceito (PoC) final funciona via linha de comando (CLI) e contemp
 - **Docker e Docker Compose**: criação e inicialização padronizada do ambiente MongoDB.
 - **Jakarta Bean Validation**: validação dos dados obrigatórios das solicitações.
 - **Lombok**: suporte à geração de código durante a compilação.
-- **JaCoCo**: plugin para validação e geração de relatório de cobertura de código (mínimo de 70%).
+- **JaCoCo**: plugin que gera o relatório de cobertura dos testes automatizados.
+
+## Como executar a aplicação
+
+### Pré-requisitos
+
+- JDK 26 instalado e disponível no terminal. Confira com `java -version`.
+- Docker com Docker Compose. No Windows, abra o Docker Desktop antes de executar os comandos.
+- Git para clonar o repositório.
+
+### Windows (PowerShell)
+
+```powershell
+git clone https://github.com/Wellington-Amorim/aep_2026.2.git
+cd aep_2026.2
+docker compose up -d --wait
+.\mvnw.cmd clean package -DskipTests
+java -jar .\target\observacao-0.0.1-SNAPSHOT.jar
+```
+
+### Linux e macOS
+
+```bash
+git clone https://github.com/Wellington-Amorim/aep_2026.2.git
+cd aep_2026.2
+docker compose up -d --wait
+bash mvnw clean package -DskipTests
+java -jar target/observacao-0.0.1-SNAPSHOT.jar
+```
+
+No menu, escolha **1** para registrar uma solicitação e guarde o protocolo exibido. Use **3** para atualizar o status e **5** para consultar os detalhes e o histórico. Para sair, escolha **0**.
 
 ## Banco de dados MongoDB
 
@@ -57,12 +87,19 @@ O comando de verificação deve retornar `{ ok: 1 }`.
 
 ### Configurar outra conexão
 
-Para utilizar outro servidor MongoDB, defina a variável de ambiente `MONGODB_URI` antes de iniciar a aplicação:
+Se o MongoDB estiver em outro servidor, defina a variável `MONGODB_URI` antes de iniciar a aplicação. Substitua `servidor-mongodb` pelo endereço do seu servidor.
+
+**Windows (PowerShell)**
 
 ```powershell
-$env:MONGODB_URI="mongodb://localhost:27017/observacao"
+$env:MONGODB_URI="mongodb://servidor-mongodb:27017/observacao"
 ```
 
+**Linux e macOS**
+
+```bash
+export MONGODB_URI="mongodb://servidor-mongodb:27017/observacao"
+```
 ### Consultar as solicitações
 
 Abra o terminal do MongoDB dentro do contêiner:
@@ -87,24 +124,26 @@ docker compose down
 
 Os dados permanecem armazenados no volume `mongodb_data` e estarão disponíveis na próxima inicialização.
 
-## Executando os testes e Cobertura (≥ 70%)
+## Testes automatizados e cobertura
 
-Este projeto cumpre o requisito de testes automatizados com cobertura mínima obrigatória de 70%.
+A suíte inclui testes do menu interativo, da camada de serviço e da inicialização do contexto Spring Boot com MongoDB. O teste de integração usa Testcontainers para iniciar seu próprio contêiner, então o Docker precisa estar em execução.
 
-### 1. Testes Unitários e Integração
+### Executar os testes
 
-Os testes cobrem a camada de serviços e o menu interativo. O `ObservacaoApplicationTests` sobe o contexto completo do Spring Boot com um MongoDB real via [Testcontainers](https://testcontainers.com/). Ele **requer Docker instalado e em execução** na máquina.
+Na pasta do projeto, use o comando correspondente ao seu sistema.
 
-Para executar todos os testes, utilize:
-```bash
-./mvnw clean test
+**Windows (PowerShell)**
+
+```powershell
+.\mvnw.cmd clean test
 ```
 
-### 2. Relatório de Cobertura (JaCoCo)
+**Linux e macOS**
 
-Para gerar e visualizar a evidência da cobertura mínima de 70% exigida pela avaliação, execute:
 ```bash
-./mvnw clean test jacoco:report
+bash mvnw clean test
 ```
-Após a execução com sucesso, acesse o relatório visual abrindo o arquivo abaixo no seu navegador de internet:
-`target/site/jacoco/index.html`
+
+### Consultar o relatório de cobertura
+
+Após executar os testes, abra `target/site/jacoco/index.html` no navegador. A cobertura mínima exigida pela avaliação é de **70%**. Confira o resultado na linha **Total** do relatório JaCoCo.
